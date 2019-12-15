@@ -46,8 +46,7 @@ private:
     void removeMinNode();
     void findNewMin();
     void decreaseNumberOfRoots();
-    void mergeNodesOfSameDegree(Node<T>* prevRoot, Node<T>* currRoo, vector<Node<T>*> &degreeArr);
-    void updateDegreesArray(vector<Node<T>*> &degreeArr, Node<T>* nodeWithUpdatedDegree);
+    void mergeNodesOfSameDegree(Node<T>* currNode, vector<Node<T>*> &degreeArr);
     void decreaseKey(Node<T>* nodeToDecrease, T val, bool setToMinusInf);
     void startCutOutProcess(Node<T>* nodeToCutOut);
     void cutOutNode(Node<T>* nodeToCutOut);
@@ -262,44 +261,35 @@ void FibonacciHeap<T>::removeMinNode() {
 }
 
 template <typename T>
-void FibonacciHeap<T>::updateDegreesArray(
-        vector<Node<T>*> &degreeArr,
-        Node<T>* nodeWithUpdatedDegree
-) {
-    int currNodeDegree = nodeWithUpdatedDegree->childrenCount;
-
-    Node<T>* sameDegreeNode = degreeArr[currNodeDegree];
-
-    degreeArr[currNodeDegree] = nodeWithUpdatedDegree;
-    degreeArr[currNodeDegree-1] = nullptr;
-
-    if (sameDegreeNode != nullptr) {
-        mergeNodesOfSameDegree(
-                sameDegreeNode,
-                nodeWithUpdatedDegree,
-                degreeArr);
-    }
-}
-
-template <typename T>
 void FibonacciHeap<T>::mergeNodesOfSameDegree(
-        Node<T>* prevRoot,
-        Node<T>* currRoot,
+        Node<T>* currNode,
         vector<Node<T>*> &degreeArr
 ) {
-    Node<T>* child = prevRoot->value > currRoot->value
-            ? prevRoot
-            : currRoot;
-    Node<T>* parent = prevRoot->value > currRoot->value
-            ? currRoot
-            : prevRoot;
+    int currNodeDegree = currNode->childrenCount;
+    Node<T>* sameDegreeNode = degreeArr[currNodeDegree];
+    degreeArr[currNodeDegree] = currNode;
 
-    if (child == min) {
-        min = min->next;
+    while (sameDegreeNode != nullptr) {
+        Node<T>* child = sameDegreeNode->value > currNode->value
+                         ? sameDegreeNode
+                         : currNode;
+        Node<T>* parent = sameDegreeNode->value > currNode->value
+                          ? currNode
+                          : sameDegreeNode;
+
+        if (child == min) {
+            min = min->next;
+        }
+
+        moveRootToChildren(child, parent);
+
+        int currNodeDegree = parent->childrenCount;
+        sameDegreeNode = degreeArr[currNodeDegree];
+        degreeArr[currNodeDegree] = parent;
+        degreeArr[currNodeDegree-1] = nullptr;
+
+        currNode = parent;
     }
-
-    moveRootToChildren(child, parent);
-    updateDegreesArray(degreeArr, parent);
 }
 
 template <typename T>
@@ -317,22 +307,10 @@ void FibonacciHeap<T>::decreaseNumberOfRoots() {
     // while not all initial roots are yet processed
     while (!allRootsSeen) {
         Node<T>* nextNode = currNode->next;
-        if (nextNode == min) allRootsSeen = true;
+        if (nextNode == min)
+            allRootsSeen = true;
 
-        int currNodeDegree = currNode->childrenCount;
-        Node<T>* sameDegreeNode = degreeArr[currNodeDegree];
-
-        // if it's the first root node of this degree
-        if (sameDegreeNode == nullptr) {
-            degreeArr[currNodeDegree] = currNode;
-        } else {
-            // recursively merge nodes with same degrees
-            mergeNodesOfSameDegree(
-                    sameDegreeNode,
-                    currNode,
-                    degreeArr);
-        }
-
+        mergeNodesOfSameDegree(currNode, degreeArr);
         currNode = nextNode;
     }
 }
