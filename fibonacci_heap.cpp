@@ -33,6 +33,7 @@ public:
 
     bool isEmpty();
     T getMin();
+    int size();
     Node<T>* insert(T el);
     void merge(FibonacciHeap<T> &fh);
     T extractMin();
@@ -75,6 +76,11 @@ T FibonacciHeap<T>::getMin() {
 }
 
 template <typename T>
+int FibonacciHeap<T>::size() {
+    return count;
+}
+
+template <typename T>
 bool FibonacciHeap<T>::isEmpty() {
     return min == nullptr;
 }
@@ -90,6 +96,19 @@ template <typename T>
 void FibonacciHeap<T>::merge(FibonacciHeap<T> &fh) {
     Node<T>* min1 = min;
     Node<T>* min2 = fh.min;
+
+    if (min1 == nullptr) {
+        count = fh.count;
+        min = min2;
+
+        // set min pointer of fh to nullptr
+        // to avoid destruction of nodes that were just merged
+        fh.min = nullptr;
+        return;
+    }
+    if (min2 == nullptr) {
+        return;
+    }
 
     Node<T>* min1Next = min1->next;
     Node<T>* min2Next = min2->next;
