@@ -21,23 +21,23 @@ public:
         this->value = initVal;
     }
 
-    // TODO: add destructor
-
     friend class FibonacciHeap<T>;
 };
 
 template <typename T>
 class FibonacciHeap {
 public:
+    ~FibonacciHeap() {
+        destructNode(min);
+    }
+
     bool isEmpty();
     T getMin();
     Node<T>* insert(T el);
-    void merge(FibonacciHeap<T> fh);
+    void merge(FibonacciHeap<T> &fh);
     T extractMin();
     void decreaseKey(Node<T>* nodeToDecrease, T val);
     void deleteNode(Node<T>* nodeToDelete);
-
-    // TODO: add destructor
 private:
     int count = 0;
     Node<T>* min = nullptr;
@@ -50,7 +50,24 @@ private:
     void decreaseKey(Node<T>* nodeToDecrease, T val, bool setToMinusInf);
     void startCutOutProcess(Node<T>* nodeToCutOut);
     void cutOutNode(Node<T>* nodeToCutOut);
+    void destructNode(Node<T>* startNode);
 };
+
+template <typename T>
+void FibonacciHeap<T>::destructNode(Node<T>* currNode) {
+    if (currNode == nullptr) {
+        return;
+    }
+
+    Node<T>* initNode = currNode;
+    do {
+        destructNode(currNode->child);
+
+        Node<T>* nextNode = currNode->next;
+        delete currNode;
+        currNode = nextNode;
+    } while (currNode != initNode);
+}
 
 template <typename T>
 T FibonacciHeap<T>::getMin() {
@@ -70,7 +87,7 @@ Node<T>* FibonacciHeap<T>::insert(T el) {
 };
 
 template <typename T>
-void FibonacciHeap<T>::merge(FibonacciHeap<T> fh) {
+void FibonacciHeap<T>::merge(FibonacciHeap<T> &fh) {
     Node<T>* min1 = min;
     Node<T>* min2 = fh.min;
 
@@ -92,6 +109,10 @@ void FibonacciHeap<T>::merge(FibonacciHeap<T> fh) {
     }
 
     count = count + fh.count;
+
+    // set min pointer of fh to nullptr
+    // to avoid destruction of nodes that were just merged
+    fh.min = nullptr;
 }
 
 template <typename T>
