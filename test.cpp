@@ -340,6 +340,30 @@ void basicTest1() {
     assert(extractedMin == 4);
 }
 
+// general tests
+void charTest1() {
+    FibonacciHeap<char> fib;
+    Node<char>* eNode = fib.insert('e');
+    fib.insert('f');
+    fib.insert('e');
+
+    FibonacciHeap<char> fib1;
+    fib1.insert('a');
+    fib1.insert('b');
+    fib1.insert('d');
+
+    fib.merge(fib1);
+
+    char extractedMin = fib.extractMin();
+    assert(extractedMin == 'a');
+    fib.decreaseKey(eNode, 'c');
+    extractedMin = fib.extractMin();
+    assert(extractedMin == 'b');
+    fib.deleteNode(eNode);
+    extractedMin = fib.extractMin();
+    assert(extractedMin == 'd');
+}
+
 void basicTest2() {
     FibonacciHeap<int> fib;
     fib.insert(2);
@@ -396,9 +420,57 @@ void basicTest2() {
     assert(extractedMin == 24);
 }
 
+void charTest2() {
+    FibonacciHeap<char> fib;
+    fib.insert('b');
+    fib.insert('c');
+    fib.insert('a');
+    fib.insert('d');
+    char extractedMin = fib.extractMin();
+    extractedMin=  fib.extractMin();
+    fib.insert('e');
+    fib.insert('g');
+    extractedMin = fib.extractMin();
+    fib.insert('b');
+    Node<char>* zNode = fib.insert('z');
+    extractedMin = fib.extractMin();
+    extractedMin = fib.extractMin();
+    extractedMin =  fib.extractMin();
+    assert(extractedMin == 'e');
+
+    fib.decreaseKey(zNode,'b');
+    extractedMin = fib.extractMin();
+    assert(extractedMin == 'b');
+
+    fib.insert('b');
+    fib.insert('c');
+    fib.insert('a');
+    Node<char>* aNode = fib.insert('d');
+    fib.insert('b');
+    fib.insert('c');
+    fib.insert('a');
+    Node<char>* anotherNode = fib.insert('d');
+    fib.insert('b');
+    fib.insert('c');
+    fib.insert('a');
+    fib.insert('d');
+    fib.extractMin();
+    assert(fib.size() == 12);
+
+    fib.deleteNode(anotherNode);
+    assert(fib.size() == 11);
+
+    fib.deleteNode(aNode);
+    assert(fib.size() == 10);
+}
+
+
 void runTests() {
     basicTest1();
     basicTest2();
+
+    charTest1();
+    charTest2();
 
     insertToEmptyHeap();
     insertNewMinToNonEmptyHeap();
