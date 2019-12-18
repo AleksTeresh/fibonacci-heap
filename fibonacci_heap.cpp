@@ -156,20 +156,6 @@ T FibonacciHeap<T>::extractMin() {
 
 template <typename T>
 void FibonacciHeap<T>::decreaseKey(Node<T> *nodeToDecrease, T val) {
-    decreaseKey(nodeToDecrease, val, false);
-}
-
-template <typename T>
-void FibonacciHeap<T>::deleteNode(Node<T> *nodeToDelete) {
-    decreaseKey(nodeToDelete, 0, true);
-    extractMin();
-}
-
-template <typename T>
-void FibonacciHeap<T>::decreaseKey(
-        Node<T> *nodeToDecrease,
-        T val, bool setToMinusInf
-) {
     // make sure the key is not increased
     if (val > nodeToDecrease->value) {
         throw std::logic_error("Not able to increase the key using decreaseKey operation");
@@ -177,13 +163,22 @@ void FibonacciHeap<T>::decreaseKey(
 
     nodeToDecrease->value = val;
     Node<T>* parent = nodeToDecrease->parent;
-    if (parent != nullptr && (setToMinusInf || val < parent->value)) {
+    if (parent != nullptr && val < parent->value) {
         startCutOutProcess(nodeToDecrease);
     }
 
-    if (setToMinusInf || val < min->value) {
+    if (val < min->value) {
         min = nodeToDecrease;
     }
+}
+
+template <typename T>
+void FibonacciHeap<T>::deleteNode(Node<T> *nodeToDelete) {
+    if (nodeToDelete->parent != nullptr) {
+        startCutOutProcess(nodeToDelete);
+    }
+    min = nodeToDelete;
+    extractMin();
 }
 
 template <typename T>

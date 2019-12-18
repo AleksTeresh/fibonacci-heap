@@ -316,8 +316,6 @@ void deleteLeaf() {
     assert(f1.extractMin() == 2);
 }
 
-
-// TODO: double check those 2
 // general tests
 void basicTest1() {
     FibonacciHeap<int> fib;
