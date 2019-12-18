@@ -72,6 +72,9 @@ void FibonacciHeap<T>::destructNode(Node<T>* currNode) {
 
 template <typename T>
 T FibonacciHeap<T>::getMin() {
+    if (min == nullptr) {
+        throw logic_error("The heap is empty. Not able to get the minimum value");
+    }
     return min->value;
 }
 
