@@ -48,10 +48,9 @@ private:
     void findNewMin();
     void decreaseNumberOfRoots();
     void mergeNodesOfSameDegree(Node<T>* currNode, vector<Node<T>*> &degreeArr);
-    void decreaseKey(Node<T>* nodeToDecrease, T val, bool setToMinusInf);
     void startCutOutProcess(Node<T>* nodeToCutOut);
     void cutOutNode(Node<T>* nodeToCutOut);
-    void destructNode(Node<T>* startNode);
+    void destructNode(Node<T>* currNode);
 };
 
 template <typename T>
