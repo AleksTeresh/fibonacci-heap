@@ -40,7 +40,9 @@ void merge2FullHeaps() {
 
     f1.merge(f2);
 
+    assert(f1.size() == 5);
     assert(f1.extractMin() == 0);
+    assert(f1.size() == 4);
 }
 
 void merge2SingleNodedHeaps() {
