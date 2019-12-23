@@ -90,7 +90,7 @@ bool FibonacciHeap<T>::isEmpty() {
 
 template <typename T>
 Node<T>* FibonacciHeap<T>::insert(T el) {
-    auto* newNode = new Node(el);
+    auto* newNode = new Node<T>(el);
     count++;
     return insert(newNode);
 };
